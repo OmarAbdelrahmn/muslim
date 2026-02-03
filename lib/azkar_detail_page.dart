@@ -46,11 +46,11 @@ class _AzkarDetailPageState extends State<AzkarDetailPage> {
       // If reached 0, move to next page
       if (_remainingCounts[_currentPage] == 0) {
         if (_currentPage < widget.azkarItems.length - 1) {
-          Future.delayed(const Duration(milliseconds: 300), () {
+          Future.delayed(const Duration(milliseconds: 100), () {
             if (mounted) {
               _pageController.nextPage(
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.easeInOut,
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOutCubic,
               );
             }
           });

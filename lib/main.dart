@@ -133,6 +133,23 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
   }
 
+  void _fastPush(Widget page) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => page,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeOutCubic;
+          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          return SlideTransition(position: animation.drive(tween), child: child);
+        },
+        transitionDuration: const Duration(milliseconds: 300),
+      ),
+    ).then((_) => _loadData());
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -337,42 +354,42 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           'عداد الصلاة',
           Icons.calculate_outlined,
           Colors.orange,
-          () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CounterPage())).then((_) => _loadData()),
+          () => _fastPush(const CounterPage()),
         ),
         _buildNavCard(
           context,
           'أوقات الصلاة',
           Icons.access_time,
           Colors.teal,
-          () => Navigator.push(context, MaterialPageRoute(builder: (context) => PrayerTimesPage(initialResult: _prayerTimesResult))),
+          () => _fastPush(PrayerTimesPage(initialResult: _prayerTimesResult)),
         ),
         _buildNavCard(
           context,
           'السنن الراتبة',
           Icons.format_list_numbered_rtl,
           Colors.orange,
-          () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SunanPage())),
+          () => _fastPush(const SunanPage()),
         ),
         _buildNavCard(
           context,
           'الأذكار',
           Icons.book_outlined,
           Colors.blue,
-          () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AzkarPage())),
+          () => _fastPush(const AzkarPage()),
         ),
         _buildNavCard(
           context,
           'الإحصائيات',
           Icons.analytics_outlined,
           Colors.green,
-          () => Navigator.push(context, MaterialPageRoute(builder: (context) => StatsPage(totalDays: _totalDays, targetDays: _targetDays))).then((_) => _loadData()),
+          () => _fastPush(StatsPage(totalDays: _totalDays, targetDays: _targetDays)),
         ),
         _buildNavCard(
           context,
           'الإنجازات',
           Icons.emoji_events_outlined,
           Colors.purple,
-          () => Navigator.push(context, MaterialPageRoute(builder: (context) => AchievementsPage(totalDays: _totalDays, targetDays: _targetDays ?? 3650))).then((_) => _loadData()),
+          () => _fastPush(AchievementsPage(totalDays: _totalDays, targetDays: _targetDays ?? 3650)),
         ),
       ],
     );
@@ -439,7 +456,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             title: const Text('عداد الصلاة'),
             onTap: () {
               Navigator.pop(context);
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const CounterPage())).then((_) => _loadData());
+              _fastPush(const CounterPage());
             },
           ),
           ListTile(
@@ -447,7 +464,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             title: const Text('أوقات الصلاة'),
             onTap: () {
               Navigator.pop(context);
-              Navigator.push(context, MaterialPageRoute(builder: (context) => PrayerTimesPage(initialResult: _prayerTimesResult)));
+              _fastPush(PrayerTimesPage(initialResult: _prayerTimesResult));
             },
           ),
           ListTile(
@@ -455,7 +472,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             title: const Text('السنن الراتبة'),
             onTap: () {
               Navigator.pop(context);
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const SunanPage()));
+              _fastPush(const SunanPage());
             },
           ),
           ListTile(
@@ -463,7 +480,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             title: const Text('الأذكار'),
             onTap: () {
               Navigator.pop(context);
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const AzkarPage()));
+              _fastPush(const AzkarPage());
             },
           ),
           ListTile(
@@ -471,7 +488,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             title: const Text('الإحصائيات'),
             onTap: () {
               Navigator.pop(context);
-              Navigator.push(context, MaterialPageRoute(builder: (context) => StatsPage(totalDays: _totalDays, targetDays: _targetDays)));
+              _fastPush(StatsPage(totalDays: _totalDays, targetDays: _targetDays));
             },
           ),
           ListTile(
@@ -479,7 +496,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             title: const Text('الإنجازات'),
             onTap: () {
               Navigator.pop(context);
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AchievementsPage(totalDays: _totalDays, targetDays: _targetDays ?? 3650)));
+              _fastPush(AchievementsPage(totalDays: _totalDays, targetDays: _targetDays ?? 3650));
             },
           ),
         ],
