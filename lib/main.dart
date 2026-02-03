@@ -8,6 +8,7 @@ import 'azkar_page.dart';
 import 'counter_page.dart';
 import 'prayer_times_page.dart';
 import 'prayer_times_service.dart';
+import 'sunan_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -347,6 +348,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ),
         _buildNavCard(
           context,
+          'السنن الراتبة',
+          Icons.format_list_numbered_rtl,
+          Colors.orange,
+          () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SunanPage())),
+        ),
+        _buildNavCard(
+          context,
           'الأذكار',
           Icons.book_outlined,
           Colors.blue,
@@ -440,6 +448,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             onTap: () {
               Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (context) => PrayerTimesPage(initialResult: _prayerTimesResult)));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.format_list_numbered_rtl),
+            title: const Text('السنن الراتبة'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const SunanPage()));
             },
           ),
           ListTile(
