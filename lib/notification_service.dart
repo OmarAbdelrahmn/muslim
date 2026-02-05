@@ -55,6 +55,20 @@ class NotificationService {
     if (androidImplementation != null) {
       await androidImplementation.requestNotificationsPermission();
     }
+
+    // Request permissions for iOS
+    final IOSFlutterLocalNotificationsPlugin? iosImplementation =
+        flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+                IOSFlutterLocalNotificationsPlugin>();
+    
+    if (iosImplementation != null) {
+      await iosImplementation.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    }
   }
 
   Future<void> scheduleInactivityNotification() async {
@@ -86,15 +100,20 @@ class NotificationService {
   Future<void> scheduleAzkarNotifications() async {
     // Cancel existing future azkar notifications to avoid duplicates when reopening app
     await cancelAzkarNotifications();
-
-    final random = Random();
     
     // Schedule for the next 12 hours (72 notifications)
-    // Starting 10 minutes from now
-    for (int i = 1; i <= 72; i++) {
-      final int notificationId = 100 + i; // IDs 101 to 172
-      final String zikr = _azkar[random.nextInt(_azkar.length)];
-      final scheduledDate = tz.TZDateTime.now(tz.local).add(Duration(minutes: 10 * i));
+    final now = tz.TZDateTime.now(tz.local);
+    
+    // Calculate minutes to add to reach the next 10-minute interval
+    int minutesUntillNext = 10 - (now.minute % 10);
+    
+    for (int i = 0; i < 72; i++) {
+      final int notificationId = 100 + i; 
+      // Cycle through the azkar list sequentially
+      final String zikr = _azkar[i % _azkar.length];
+      
+      // Calculate delay: align to next 10-minute mark + (i * 10 minutes)
+      final scheduledDate = now.add(Duration(minutes: minutesUntillNext + (i * 10)));
 
       try {
         await flutterLocalNotificationsPlugin.zonedSchedule(
@@ -116,7 +135,7 @@ class NotificationService {
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime,
-          matchDateTimeComponents: DateTimeComponents.time, // Optional: if we wanted daily, but here we want one-off series
+          matchDateTimeComponents: DateTimeComponents.time, 
         );
       } catch (e) {
         print('Error scheduling notification $notificationId: $e');
@@ -125,8 +144,8 @@ class NotificationService {
   }
 
   Future<void> cancelAzkarNotifications() async {
-    // Cancel IDs 101 to 172
-    for (int i = 1; i <= 72; i++) {
+    // Cancel IDs 100 to 171 (matching the schedule loop 0..71 + 100)
+    for (int i = 0; i < 72; i++) {
       await flutterLocalNotificationsPlugin.cancel(100 + i);
     }
   }
