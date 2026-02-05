@@ -59,6 +59,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _loadData(refreshPrayerTimes: true);
+    _notificationService.scheduleAzkarNotifications();
   }
 
   @override
@@ -72,7 +73,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
       _notificationService.scheduleInactivityNotification();
     } else if (state == AppLifecycleState.resumed) {
-      _notificationService.cancelAllNotifications();
+      _notificationService.cancelInactivityNotification();
+      _notificationService.scheduleAzkarNotifications();
     }
   }
 
